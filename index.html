@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Calendar</title>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+    .current-day {
+      background-color: lightblue;
+    }
+    .navigation-buttons {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="navigation-buttons">
+  <button id="prev-month-btn">&lt;</button>
+  <input type="month" id="month-picker" value="">
+  <button id="next-month-btn">&gt;</button>
+  <button id="return-to-current-btn">Return to This Month</button>
+</div>
+
+<h1 id="current-month"></h1>
+
+<table id="calendar">
+  <thead>
+    <tr>
+      <th>Sun</th>
+      <th>Mon</th>
+      <th>Tue</th>
+      <th>Wed</th>
+      <th>Thu</th>
+      <th>Fri</th>
+      <th>Sat</th>
+    </tr>
+  </thead>
+  <tbody id="calendar-body">
+  </tbody>
+</table>
+
+<script>
+  let currentDisplayedMonth = new Date().getMonth();
+  let currentDisplayedYear = new Date().getFullYear();
+
+  function updateCalendar(month = currentDisplayedMonth, year = currentDisplayedYear) {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const calendarBody = document.getElementById("calendar-body");
+    calendarBody.innerHTML = '';
+
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    let date = 1;
+    let row;
+
+    for (let i = 0; i < 6; i++) {
+      row = document.createElement("tr");
+
+      for (let j = 0; j < 7; j++) {
+        const cell = document.createElement("td");
+
+        if (i === 0 && j < firstDayOfMonth) {
+          const cellText = document.createTextNode('');
+          cell.appendChild(cellText);
+        } else if (date > daysInMonth) {
+          const cellText = document.createTextNode('\u00A0'); // Non-breaking space
+          cell.appendChild(cellText);
+        } else {
+          const cellText = document.createTextNode(date);
+          cell.appendChild(cellText);
+          if (date === now.getDate() && month === currentMonth && year === currentYear) {
+            cell.classList.add("current-day");
+          }
+          date++;
+        }
+        row.appendChild(cell);
+      }
+      calendarBody.appendChild(row);
+    }
+
+    const currentMonthElement = document.getElementById("current-month");
+    currentMonthElement.textContent = `${new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}`;
+  }
+
+  updateCalendar(); // Call initially to prevent delay
+
+  // Set the value of the month picker input to the current month
+  const today = new Date();
+  document.getElementById("month-picker").value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+  // Function to update the calendar based on the chosen month
+  document.getElementById("month-picker").addEventListener("input", function(event) {
+    const selectedDate = new Date(event.target.value);
+    const selectedMonth = selectedDate.getMonth();
+    const selectedYear = selectedDate.getFullYear();
+    currentDisplayedMonth = selectedMonth;
+    currentDisplayedYear = selectedYear;
+    updateCalendar(selectedMonth, selectedYear);
+  });
+
+  // Function to navigate to the previous month
+  document.getElementById("prev-month-btn").addEventListener("click", function() {
+    currentDisplayedMonth -= 1;
+    if (currentDisplayedMonth < 0) {
+      currentDisplayedMonth = 11;
+      currentDisplayedYear -= 1;
+    }
+    document.getElementById("month-picker").value = `${currentDisplayedYear}-${String(currentDisplayedMonth + 1).padStart(2, '0')}`;
+    updateCalendar(currentDisplayedMonth, currentDisplayedYear);
+  });
+
+  // Function to navigate to the next month
+  document.getElementById("next-month-btn").addEventListener("click", function() {
+    currentDisplayedMonth += 1;
+    if (currentDisplayedMonth > 11) {
+      currentDisplayedMonth = 0;
+      currentDisplayedYear += 1;
+    }
+    document.getElementById("month-picker").value = `${currentDisplayedYear}-${String(currentDisplayedMonth + 1).padStart(2, '0')}`;
+    updateCalendar(currentDisplayedMonth, currentDisplayedYear);
+  });
+
+  // Function to return to the current month
+  document.getElementById("return-to-current-btn").addEventListener("click", function() {
+    currentDisplayedMonth = new Date().getMonth();
+    currentDisplayedYear = new Date().getFullYear();
+    document.getElementById("month-picker").value = `${currentDisplayedYear}-${String(currentDisplayedMonth + 1).padStart(2, '0')}`;
+    updateCalendar();
+  });
+</script>
+
+</body>
+</html>
