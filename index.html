@@ -4,6 +4,10 @@
 <head>
   <title>Simple Calendar</title>
   <style>
+    html {
+      font-size: 1.7em;
+      font-family: arial;
+    }
     table {
       border-collapse: collapse;
     }
@@ -11,6 +15,7 @@
       border: 1px solid black;
       padding: 8px;
       text-align: center;
+      font-size: 1.7em;
     }
     .current-day {
       background-color: lightblue;
@@ -18,14 +23,19 @@
     .navigation-buttons {
       margin-bottom: 10px;
     }
+    button {
+      font-size: 1em;
+    }
+    input {
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
-
 <div class="navigation-buttons">
   <button id="prev-month-btn">&lt;</button>
   <input type="month" id="month-picker" value="">
-  <button id="next-month-btn">&gt;</button>
+  <button id="next-month-btn">&gt;</button><br>
   <button id="return-to-current-btn">Return to This Month</button>
 </div>
 
